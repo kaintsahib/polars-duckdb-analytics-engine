@@ -3,7 +3,6 @@ import polars as pl
 import duckdb
 from loguru import logger
 
-# Pre-generate 1,000,000 synthetic telemetry rows in memory (Apache Arrow format)
 _NUM_ROWS = 1_000_000
 _TELEMETRY_DF = pl.DataFrame({
     "node_id": [f"gpu-node-{i % 8}" for i in range(_NUM_ROWS)],
@@ -12,14 +11,10 @@ _TELEMETRY_DF = pl.DataFrame({
     "latency_ms": [12.5 + (i % 40) * 0.75 for i in range(_NUM_ROWS)],
 })
 
-
 def run_high_speed_analysis():
     start_time = time.perf_counter()
-
-    # Zero-copy SQL aggregation via DuckDB directly on Polars Arrow buffers
     con = duckdb.connect(database=":memory:")
     con.register("telemetry", _TELEMETRY_DF)
-
     query = """
         SELECT
             node_id,
@@ -33,8 +28,6 @@ def run_high_speed_analysis():
     """
     result_df = con.execute(query).pl()
     con.close()
-
     execution_time = round((time.perf_counter() - start_time) * 1000.0, 2)
-    logger.info(f"⚡ Processed {_NUM_ROWS:,} rows in {execution_time} ms")
-
+    logger.info(f"Processed {_NUM_ROWS:,} rows in {execution_time} ms")
     return result_df.to_dicts(), execution_time
