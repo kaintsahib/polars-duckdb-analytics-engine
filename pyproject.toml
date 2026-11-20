@@ -1,9 +1,9 @@
 [project]
-name = "dock-project"
+name = "polars-duckdb-analytics-engine"
 version = "0.1.0"
-description = ""
+description = "Sub-50ms Zero-Copy Analytics Engine built with Polars, DuckDB, and FastAPI"
 authors = [
-    {name = "Your Name",email = "you@example.com"}
+    {name = "Gaurav Sahib", email = "gauravinnocent41@gmail.com"}
 ]
 requires-python = ">=3.12,<4.0"
 dependencies = [
@@ -15,6 +15,9 @@ dependencies = [
     "loguru (>=0.7.3,<0.8.0)"
 ]
 
+[tool.poetry.group.dev.dependencies]
+pytest = ">=8.3.0"
+httpx = ">=0.28.0"
 
 [build-system]
 requires = ["poetry-core>=2.0.0,<3.0.0"]
