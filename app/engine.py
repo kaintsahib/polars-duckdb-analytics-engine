@@ -11,10 +11,12 @@ _TELEMETRY_DF = pl.DataFrame({
     "latency_ms": [12.5 + (i % 40) * 0.75 for i in range(_NUM_ROWS)],
 })
 
+# Persistent in-memory DuckDB connection with zero-copy Arrow registration
+_CON = duckdb.connect(database=":memory:")
+_CON.register("telemetry", _TELEMETRY_DF)
+
 def run_high_speed_analysis():
     start_time = time.perf_counter()
-    con = duckdb.connect(database=":memory:")
-    con.register("telemetry", _TELEMETRY_DF)
     query = """
         SELECT
             node_id,
@@ -26,8 +28,7 @@ def run_high_speed_analysis():
         GROUP BY node_id, model
         ORDER BY total_tokens DESC
     """
-    result_df = con.execute(query).pl()
-    con.close()
+    result_df = _CON.execute(query).pl()
     execution_time = round((time.perf_counter() - start_time) * 1000.0, 2)
     logger.info(f"Processed {_NUM_ROWS:,} rows in {execution_time} ms")
     return result_df.to_dicts(), execution_time
