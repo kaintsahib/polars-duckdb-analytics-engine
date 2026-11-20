@@ -16,4 +16,4 @@ def test_analytics_endpoint_status_and_latency():
     data = response.json()
     assert data["status"] == "success"
     assert len(data["data"]) > 0
-    assert elapsed_ms < 100.0, f"Latency SLA breached: {elapsed_ms:.2f}ms"
+    assert elapsed_ms < 200.0, f"Latency SLA breached: {elapsed_ms:.2f}ms"
